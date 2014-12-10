@@ -3,6 +3,7 @@ RSpec.describe 'Logging::Appenders::Logstash' do
     FileUtils.rm_rf("/tmp/logstash.output")
     Timecop.freeze(Time.local(2014, 12, 10, 10, 20, 19))
     Logging.mdc.clear
+    Logging.ndc.clear
   end
 
   let(:appender) {
@@ -25,16 +26,18 @@ RSpec.describe 'Logging::Appenders::Logstash' do
     expect(log_content).to eq({"message" => "test",
                                "@timestamp" => "2014-12-10T10:20:19.000Z",
                                "@version" => "1",
-                               "severity" => "INFO",
-                               "host" => "pa-dev"})
+                               "@severity" => "INFO",
+                               "@log_name" => "logstash",
+                               "@host" => "pa-dev"})
   end
 
   it "writes a log with a hash" do
     logger.info("test" => 1, "test2" => "ok")
     expect(log_content).to eq({"@timestamp" => "2014-12-10T10:20:19.000Z",
                                "@version" => "1",
-                               "severity" => "INFO",
-                               "host" => "pa-dev",
+                               "@severity" => "INFO",
+                               "@host" => "pa-dev",
+                               "@log_name" => "logstash",
                                "test" => 1,
                                "test2" => "ok"
                               })
@@ -45,19 +48,37 @@ RSpec.describe 'Logging::Appenders::Logstash' do
     logger.happy("test" => 1, "test2" => "ok")
     expect(log_content).to eq({"@timestamp" => "2014-12-10T10:20:19.000Z",
                                "@version" => "1",
-                               "severity" => "HAPPY",
-                               "host" => "pa-dev",
+                               "@severity" => "HAPPY",
+                               "@host" => "pa-dev",
+                               "@log_name" => "logstash",
                                "test" => 1,
                                "test2" => "ok",
                                "app" => "core_api"
                               })
   end
 
+  it "enhances the information with the ndc context" do
+    Logging.ndc.push(:app => "myapp")
+    Logging.ndc.push(:subsystem => "sub1")
+
+    logger.happy("test" => 1, "test2" => "ok")
+    expect(log_content).to eq({"@timestamp" => "2014-12-10T10:20:19.000Z",
+                               "@version" => "1",
+                               "@severity" => "HAPPY",
+                               "@host" => "pa-dev",
+                               "@log_name" => "logstash",
+                               "test" => 1,
+                               "test2" => "ok",
+                               "app" => "myapp",
+                               "subsystem" => "sub1"
+                              })
+  end
+
+
   it "escapes multilines correctly" do
     logger.happy("test\ntest2")
     expect(File.readlines("/tmp/logstash.output").size).to eq(1)
   end
-
 
   def log_content
     JSON.parse(File.read("/tmp/logstash.output"))

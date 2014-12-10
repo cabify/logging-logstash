@@ -51,34 +51,24 @@ module Logging
       end
 
       def data2logstash_event(logging_event)
-        # event = case logging_event
-        #           when ::Logging::LogEvent
-        #             if logging_event.data.kind_of?(Hash)
-        #               LogStash::Event.new(logging_event.data)
-        #             else
-        #               LogStash::Event.new("message" => msg2str(logging_event.data))
-        #             end
-        #
-        #           when ::LogStash::Event
-        #             logging_event.clone
-        #           when Hash
-        #             event_data = logging_event.merge("@timestamp" => Time.now)
-        #             LogStash::Event.new(event_data)
-        #           else
-        #             LogStash::Event.new("message" => msg2str(logging_event), "@timestamp" => Time.now)
-        #         end
-
         stash_event=if logging_event.data.kind_of?(Hash)
-                      LogStash::Event.new(logging_event.data)
+                      LogStash::Event.new(logging_event.data.dup)
                     else
                       LogStash::Event.new("message" => msg2str(logging_event.data))
                     end
 
-        stash_event['severity'] ||= ::Logging::LNAMES[logging_event.level]
-        stash_event['host'] ||= @host
+        stash_event['@severity'] ||= ::Logging::LNAMES[logging_event.level]
+        stash_event['@host'] ||= @host
+        stash_event['@log_name'] ||= @name
 
         Logging.mdc.context.each do |key, value|
           stash_event[key] ||= value #we don't overrdide given things
+        end
+
+        Logging.ndc.context.each do |ctx|
+          ctx.each do |key, value|
+            stash_event[key] ||= value #we don't overrdide given things
+          end
         end
 
 # In case Time#to_json has been overridden

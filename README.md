@@ -22,7 +22,8 @@ Or install it yourself as:
 
 Configure it as an appender:
 
-Logging.add_appender(Logging::Appenders.logtash('mylog',:uri => 'tcp:loghost:5229')
+    logger=Logging.logger["test"]
+    logger.add_appenders(Logging::Appenders.logstash('mylog',{:uri => 'tcp://localhost:5229'}))
 
 then log hashes or strings:
 
@@ -35,9 +36,11 @@ String messages will be logged like a {:message => message} hash.
 The given hash will be enhanced by the following keys:
  * @timestamp
  * @version
- * severity (uppercase name of log level)
- * host (host of the logger)
+ * @severity (uppercase name of log level)
+ * @host (host of the logger)
+ * @log_name (the name you have given the appender)
  * everything from the mdc (Mapped Diagnostic Context) hash
+ * everything from the ndc (Nested Diagnostic Context) array
 
 ## Contributing
 
