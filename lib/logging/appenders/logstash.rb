@@ -61,13 +61,18 @@ module Logging
         stash_event['@host'] ||= @host
         stash_event['@log_name'] ||= @name
 
+        #we don't overrdide given things from any context (mdc/ndc)
         Logging.mdc.context.each do |key, value|
-          stash_event[key] ||= value #we don't overrdide given things
+          stash_event[key] ||= value
         end
 
         Logging.ndc.context.each do |ctx|
+          if ctx.respond_to?(:each)
           ctx.each do |key, value|
-            stash_event[key] ||= value #we don't overrdide given things
+            stash_event[key] ||= value
+          end
+          else
+            stash_event[ctx] ||= true #
           end
         end
 
