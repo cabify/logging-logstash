@@ -27,11 +27,11 @@ Configure it as an appender:
 
 then log hashes or strings:
 
-    Logging.root.info("string")
+    Logging.logger.root.info("string")
 
 String messages will be logged like a {:message => message} hash.
 
-    Logging.root.info(:my => "string", :app => "myappname")
+    Logging.logger.root.info(:my => "string", :app => "myappname")
 
 The given hash will be enhanced by the following keys:
  * @timestamp
