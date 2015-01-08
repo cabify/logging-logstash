@@ -12,9 +12,5 @@ before_script:
   - mkdir -p shippable/testresults
   - mkdir -p tmp/cache/
 
-env:
-  global:
-    - DISPLAY=:99.0
-    - CI_REPORTS=shippable/testresults COVERAGE_REPORTS=shippable/codecoverage
 script:
-  - rspec spec/suite.rb --format RspecJunitFormatter --out shippable/testresults/results.xml
+  - rspec spec
