@@ -16,16 +16,8 @@ env:
   global:
     - DISPLAY=:99.0
     - CI_REPORTS=shippable/testresults COVERAGE_REPORTS=shippable/codecoverage
-  matrix:
-    - TEST_GROUP=1of2
-    - TEST_GROUP=2of2
-
-script:
-  - rspec spec/suite.rb --format RspecJunitFormatter --out shippable/testresults/results.xml
 
 branches:
   only:
     - master
     - staging
-
-parallelized_test : true
