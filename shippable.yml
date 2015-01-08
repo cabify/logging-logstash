@@ -6,11 +6,3 @@ notifications:
     recipients:
       - prabesh708@gmail.com
       - prabesh.shrestha@preisanalytics.de
-
-before_script:
-  - mkdir -p shippable/codecoverage
-  - mkdir -p shippable/testresults
-  - mkdir -p tmp/cache/
-
-script:
-  - rspec spec
