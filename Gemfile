@@ -2,7 +2,7 @@ source 'https://rubygems.org'
 
 
 group :development, :test do
-  gem "rspec", "3.1.0"
+  gem "rspec"
   gem "logging", "1.8.2"
   gem "timecop", "~> 0.7.1"
 end
