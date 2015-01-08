@@ -3,8 +3,9 @@ source 'https://rubygems.org'
 
 group :development, :test do
   gem "rspec"
-  gem "logging", "1.8.2"
   gem "timecop", "~> 0.7.1"
+  # Including gems below as dependencies with gemspec generates undefined method 'init' error
+  gem "logging", "1.8.2"
   gem "logstash-logger", "~> 0.7.0"
 end
 
