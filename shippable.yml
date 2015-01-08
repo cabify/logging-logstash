@@ -18,8 +18,3 @@ env:
     - CI_REPORTS=shippable/testresults COVERAGE_REPORTS=shippable/codecoverage
 script:
   - rspec spec/suite.rb --format RspecJunitFormatter --out shippable/testresults/results.xml
-
-branches:
-  only:
-    - master
-    - staging
