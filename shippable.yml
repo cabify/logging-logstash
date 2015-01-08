@@ -28,5 +28,4 @@ branches:
     - master
     - staging
 
-cache: true
 parallelized_test : true
