@@ -25,7 +25,7 @@ module Logging
       # it accepts all options of logstash logger: https://github.com/dwbutler/logstash-logger
       #
       def initialize(name, opts = {})
-        @host=opts.delete(:host) || Socket.gethostname
+        @host="pa-dev"#opts.delete(:host) || Socket.gethostname
         @logstash_device=LogStashLogger::Device.new(opts)
         super
       end

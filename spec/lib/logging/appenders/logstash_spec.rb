@@ -24,7 +24,7 @@ RSpec.describe 'Logging::Appenders::Logstash' do
   it "writes a log with a string" do
     logger.info("test")
     expect(log_content).to eq({"message" => "test",
-                               "@timestamp" => "2014-12-10T10:20:19.000Z",
+                               "@timestamp" => "2014-12-10T09:20:19.000Z",
                                "@version" => "1",
                                "@severity" => "INFO",
                                "@log_name" => "logstash",
@@ -33,7 +33,7 @@ RSpec.describe 'Logging::Appenders::Logstash' do
 
   it "writes a log with a hash" do
     logger.info("test" => 1, "test2" => "ok")
-    expect(log_content).to eq({"@timestamp" => "2014-12-10T10:20:19.000Z",
+    expect(log_content).to eq({"@timestamp" => "2014-12-10T09:20:19.000Z",
                                "@version" => "1",
                                "@severity" => "INFO",
                                "@host" => "pa-dev",
@@ -46,7 +46,7 @@ RSpec.describe 'Logging::Appenders::Logstash' do
   it "enhances the information with the mdc context" do
     Logging.mdc["app"] = "core_api"
     logger.happy("test" => 1, "test2" => "ok")
-    expect(log_content).to eq({"@timestamp" => "2014-12-10T10:20:19.000Z",
+    expect(log_content).to eq({"@timestamp" => "2014-12-10T09:20:19.000Z",
                                "@version" => "1",
                                "@severity" => "HAPPY",
                                "@host" => "pa-dev",
@@ -62,13 +62,13 @@ RSpec.describe 'Logging::Appenders::Logstash' do
     Logging.ndc.push(:subsystem => "sub1")
 
     logger.happy("test" => 1, "test2" => "ok")
-    expect(log_content).to eq({"@timestamp" => "2014-12-10T10:20:19.000Z",
+    expect(log_content).to eq({"test" => 1,
+                               "test2" => "ok",
+                               "@timestamp" => "2014-12-10T09:20:19.000Z",
                                "@version" => "1",
                                "@severity" => "HAPPY",
                                "@host" => "pa-dev",
                                "@log_name" => "logstash",
-                               "test" => 1,
-                               "test2" => "ok",
                                "app" => "myapp",
                                "subsystem" => "sub1"
                               })
