@@ -74,6 +74,19 @@ RSpec.describe 'Logging::Appenders::Logstash' do
                               })
   end
 
+  it "turns _ids to string" do
+    logger.happy("test_id" => 1, "test2_id" => "ok")
+    expect(log_content).to eq({
+                               "test2_id" => "ok",
+                               "test_id" => "1",
+                               "@timestamp" => "2014-12-10T10:20:19.000Z",
+                               "@version" => "1",
+                               "@severity" => "HAPPY",
+                               "@host" => "pa-dev",
+                               "@log_name" => "logstash"
+                              })
+  end
+
 
   it "escapes multilines correctly" do
     logger.happy("test\ntest2")

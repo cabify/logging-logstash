@@ -8,6 +8,7 @@ module Logging
     # This class provides an Appender that can write to remote syslog.
     #
     class Logstash < Logging::Appender
+      ID_REG_EXP=/_id$/
 
       def self.num_to_level(level_num)
         @level_nums ||= Loggin::LEVELS..inject({}) do |hash, kv|
@@ -61,16 +62,16 @@ module Logging
         stash_event['@host'] ||= @host
         stash_event['@log_name'] ||= @name
 
-        #we don't overrdide given things from any context (mdc/ndc)
+        #context values don't override given values
         Logging.mdc.context.each do |key, value|
           stash_event[key] ||= value
         end
 
         Logging.ndc.context.each do |ctx|
           if ctx.respond_to?(:each)
-          ctx.each do |key, value|
-            stash_event[key] ||= value
-          end
+            ctx.each do |key, value|
+              stash_event[key] ||= value
+            end
           else
             stash_event[ctx] ||= true #
           end
@@ -80,6 +81,14 @@ module Logging
         if stash_event.timestamp.is_a?(Time)
           stash_event.timestamp = stash_event.timestamp.iso8601(3)
         end
+        
+
+        stash_event.to_hash.each do |key,value|
+          if key =~ ID_REG_EXP
+            stash_event[key]=value.to_s
+          end
+        end
+        
         stash_event
       end
 
