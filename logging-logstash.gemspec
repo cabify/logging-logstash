@@ -22,5 +22,5 @@ Gem::Specification.new do |spec|
   spec.add_development_dependency "rake", "~> 10.0"
   
   spec.add_dependency "logging", ">= 1.8.1"
-  spec.add_dependency "logstash-logger", ">= 0.7.0"
+  spec.add_dependency "logstash-logger", "0.10.3"
 end
