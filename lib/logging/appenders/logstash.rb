@@ -45,9 +45,11 @@ module Logging
       #
       def write(event)
         ls_event= data2logstash_event(event)
-
-        logstash_device.write(ls_event.to_json+"\n")
-        logstash_device.flush
+        
+        sync do
+          logstash_device.write(ls_event.to_json+"\n")
+          logstash_device.flush
+        end
         self
       end
 
